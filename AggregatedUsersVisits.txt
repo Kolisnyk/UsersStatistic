@@ -1,0 +1,13 @@
+import scala.util.Try
+
+case class Row(sourceIP: String, destURL: String ,visitDate: String, adRevenue: String, userAgent: String, countryCode: String, languageCode: String, searchWord: String, duration: Integer)
+
+val aov = sc.textFile("/home/oleksii/bd/uservisits/")
+
+val dataAov = aov.flatMap { line => Try { line.split(",") match {case Array(sourceIP, destURL, visitDate, adRevenue, userAgent, countryCode, languageCode, searchWord, duration) => Row(sourceIP, destURL, visitDate, adRevenue, userAgent, countryCode, languageCode, searchWord, duration.toInt) } }.toOption }
+
+dataAov.map { x => x.countryCode }
+       .countByValue()
+       .toSeq
+       .sortBy( - _._2)
+       .take(10)
